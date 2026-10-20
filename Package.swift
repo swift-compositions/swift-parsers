@@ -45,7 +45,7 @@ let package = Package(
             url: "https://github.com/swift-molecules/swift-source.git",
             branch: "main"
         ),
-        .package(url: "https://github.com/swift-compositions/swift-clocks.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-kernel.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -60,7 +60,7 @@ let package = Package(
                 .product(name: "Formatter", package: "swift-formatter"),
                 .product(name: "Time", package: "swift-time"),
                 .product(name: "Source", package: "swift-source"),
-                .product(name: "Clocks", package: "swift-clocks"),
+                .product(name: "Kernel Clock", package: "swift-kernel"),
             ]
         ),
         .target(
