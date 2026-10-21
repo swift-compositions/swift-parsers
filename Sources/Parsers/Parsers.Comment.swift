@@ -127,7 +127,10 @@ extension Parsers.Comment.Block: Parsing {
                     input.removeFirst()
                 }
             } else {
-                content.append(input.first!)
+                guard let byte = input.first else {
+                    preconditionFailure("input is non-empty inside the scanning loop")
+                }
+                content.append(byte)
                 input.removeFirst()
             }
         }

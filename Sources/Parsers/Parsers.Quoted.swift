@@ -86,12 +86,11 @@ extension Parsers.Quoted.Double: Parsing {
                 }
             } else if byte == .ascii.lf || byte == .ascii.cr {
 
-                if allowNewlines {
-                    result.append(byte)
-                    input.removeFirst()
-                } else {
+                guard allowNewlines else {
                     throw .unexpectedNewline
                 }
+                result.append(byte)
+                input.removeFirst()
             } else {
                 result.append(byte)
                 input.removeFirst()
@@ -138,12 +137,11 @@ extension Parsers.Quoted.Single: Parsing {
                 return String(decoding: result, as: UTF8.self)
             } else if byte == .ascii.lf || byte == .ascii.cr {
 
-                if allowNewlines {
-                    result.append(byte)
-                    input.removeFirst()
-                } else {
+                guard allowNewlines else {
                     throw .unexpectedNewline
                 }
+                result.append(byte)
+                input.removeFirst()
             } else {
                 result.append(byte)
                 input.removeFirst()
@@ -187,13 +185,12 @@ extension Parsers.Quoted.Doubling: Parsing {
             if byte == quote {
                 input.removeFirst()
 
-                if input.first == quote {
-                    result.append(quote)
-                    input.removeFirst()
-                } else {
+                guard input.first == quote else {
 
                     return String(decoding: result, as: UTF8.self)
                 }
+                result.append(quote)
+                input.removeFirst()
             } else {
                 result.append(byte)
                 input.removeFirst()

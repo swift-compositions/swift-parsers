@@ -79,15 +79,14 @@ extension Parsers.Separated: Parsing {
                 results.append(next)
             } catch {
 
-                if allowTrailing {
-
-                    input = elementSaved
-                    break
-                } else {
+                guard allowTrailing else {
 
                     input = saved
                     break
                 }
+
+                input = elementSaved
+                break
             }
         }
 

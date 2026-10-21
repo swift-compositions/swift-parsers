@@ -36,7 +36,9 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-formatter.git",
-            branch: "main", traits: ["Number", "Time"]),
+            branch: "main",
+            traits: ["Number", "Time"]
+        ),
         .package(
             url: "https://github.com/swift-atoms/swift-time.git",
             branch: "main"

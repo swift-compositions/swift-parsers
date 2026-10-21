@@ -158,11 +158,10 @@ extension Parsers.Diagnostic {
         location: Source::Source.Location,
         source: Source
     ) -> String {
-        if let filename = source.filename {
-            return "\(filename):\(location.line):\(location.column): error: \(error)"
-        } else {
+        guard let filename = source.filename else {
             return "error at \(location.line):\(location.column): \(error)"
         }
+        return "\(filename):\(location.line):\(location.column): error: \(error)"
     }
 
     @usableFromInline
