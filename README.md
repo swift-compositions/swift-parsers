@@ -1,195 +1,21 @@
 # swift-parsers
 
-![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+Use this package when you write a parser for a text format and want ready-made pieces for it: integers in four bases, quoted strings, comments, identifiers, whitespace and newlines, lists with separators, operator chains and precedence climbing, plus error messages that point at a line and column. Start from the leaf parsers under `Parsers`, such as `Parsers.Integer.Decimal` or `Parsers.Quoted.Double`, combine them with `Parsers.Separated` and `Parsers.Expression.Climbing`, and report failures with `Parsers.Diagnostic.Source`. The `Parsing` protocol and the core combinators come from swift-parser, which this package re-exports. If your grammar nests as deep as the input says, or you re-parse a document after small edits, use swift-parser-machine.
 
-Batteries-included parsers for the recurring shapes in text formats — integers in four bases, quoted strings with escape handling, identifiers, whitespace, newlines, comments, and expression parsing with precedence climbing.
+## Laws
 
-## Overview
-
-swift-parsers is a single-import convenience layer over the parsing infrastructure in [swift-molecules](https://github.com/swift-molecules). `import Parsers` re-exports the underlying parser modules (`Parser`, `Parser_Machine`, `ASCII`, `Format`, `Time`, `Source`, and `Async`) and adds ready-made parsers for the token shapes that nearly every text format needs, so you compose grammars instead of rewriting byte-scanning loops.
-
-Every parser is a small `Sendable` struct conforming to `Parser.Protocol`: it consumes from an `inout Substring.UTF8View` and throws a typed, parser-specific error on failure — no `any Error` anywhere in the surface.
-
-## Quick Start
-
-CSV- and SQL-style strings escape a literal quote by doubling it. Hand-rolled scanners routinely get the lookahead wrong at `""` versus end-of-string; `Parser.Quoted.Doubling` handles it and leaves the input positioned after the closing quote:
-
-```swift
-import Parsers
-
-var input = "\"say \"\"hi\"\"\",next"[...].utf8
-
-let field = try Parser.Quoted.Doubling().parse(&input)
-// field == "say \"hi\""
-// input rests at: ,next
-```
-
-Overflow-checked integer parsing into any `FixedWidthInteger`, with the base and prefix policy stated in the type rather than re-derived from string inspection:
-
-```swift
-import Parsers
-
-var hex = "0xFF"[...].utf8
-let color = try Parser.Integer<UInt32>.Hexadecimal(requirePrefix: true).parse(&hex)
-// color == 255
-
-var count = "007"[...].utf8
-let value = try Parser.Integer<Int>.Decimal(allowLeadingZeros: true).parse(&count)
-// value == 7 — a value that overflows Int throws .overflow instead of trapping
-```
-
-## Installation
-
-Add swift-parsers to your `Package.swift`:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/swift-compositions/swift-parsers.git", branch: "main")
-]
-```
-
-Add the product to your target:
-
-```swift
-.target(
-    name: "YourTarget",
-    dependencies: [
-        .product(name: "Parsers", package: "swift-parsers")
-    ]
-)
-```
-
-### Requirements
-
-- Swift 6.3+
-- macOS 26+, iOS 26+, tvOS 26+, watchOS 26+, visionOS 26+
-
-## Usage Examples
-
-### Expression parsing with precedence climbing
-
-Operator precedence is the classic place where recursive-descent parsers sprawl into one grammar rule per precedence level. `Parser.Expression.Climbing` takes an atom parser plus a declarative operator table and handles precedence, associativity, and optional prefix/postfix operators in one pass:
-
-```swift
-import Parsers
-
-// An operator token parser: matches a single ASCII byte.
-struct Symbol: Parser.`Protocol`, Sendable {
-    typealias Input = Substring.UTF8View
-    typealias Output = Void
-    typealias Failure = Parser.Match.Error
-
-    let byte: UInt8
-
-    func parse(_ input: inout Input) throws(Failure) -> Void {
-        guard input.first == byte else {
-            throw .predicateFailed(description: "operator")
-        }
-        input.removeFirst()
-    }
-}
-
-let arithmetic = Parser.Expression.Climbing(
-    atom: Parser.Integer<Int>.Decimal(allowSign: false),
-    operators: [
-        .init(parser: Symbol(byte: UInt8(ascii: "+")), precedence: 1, associativity: .left) { $0 + $1 },
-        .init(parser: Symbol(byte: UInt8(ascii: "-")), precedence: 1, associativity: .left) { $0 - $1 },
-        .init(parser: Symbol(byte: UInt8(ascii: "*")), precedence: 2, associativity: .left) { $0 * $1 },
-    ]
-)
-
-var input = "10-2*3"[...].utf8
-let value = try arithmetic.parse(&input)
-// value == 4 — multiplication binds tighter than subtraction
-```
-
-`Parser.Chain.Left` and `Parser.Chain.Right` are the lighter alternatives when all operators share one precedence level.
-
-Both families require a `Restorable` input whose `Checkpoint` is `Equatable` (`Substring`, `ArraySlice` and other checkpointed inputs qualify; a `Copyable` input without a checkpoint no longer does). They use it to stop when an operator and operand together consume nothing: the input is restored to before that operator and the last valid result is returned, instead of looping or recursing at the same position. This guards repeated same-position iteration only; it is not a bound on stack depth or a complexity guarantee for long valid input.
-
-### Structural combinators
-
-`Parser.Separated` parses delimiter-separated sequences with count constraints and trailing-separator policy; `Parser.Between` parses content between open and close delimiters — both generic over any element parsers that share an input type.
-
-### Line-oriented lexing
-
-```swift
-import Parsers
-
-var line = "//  configuration block\n"[...].utf8
-
-// Consume the comment up to (not including) the newline …
-_ = try Parser.Comment.Line(prefix: "//").parse(&line)
-
-// … then the newline, accepting LF, CR, or CRLF.
-try Parser.Newline.Any().parse(&line)
-```
-
-Whitespace handling is split by direction — `Parser.Whitespace.Horizontal` (spaces, tabs), vertical newline parsers per style (`LF`, `CR`, `CRLF`), and skip variants — so line-oriented formats state exactly what they accept. `Parser.Identifier.CStyle` matches `[a-zA-Z_][a-zA-Z0-9_]*`, and `Parser.Comment.Block` supports nested block comments.
-
-### Diagnostics and debugging
-
-`Parser.Diagnostic.Source` maps byte offsets in failed parses to line/column locations and formats errors with source snippets and carets. `Parser.Debug.Trace` and `Parser.Debug.Profile` wrap any parser with entry/exit logging or invocation-timing statistics without changing its behavior.
-
-## Architecture
-
-Single library module plus a test-support product:
-
-| Product | When to import |
-|---------|----------------|
-| `Parsers` | Applications and libraries composing parsers; re-exports the underlying parser modules so one import suffices |
-| `Parsers Test Support` | Test targets exercising parsers built on this package |
-
-| Namespace | Purpose |
-|-----------|---------|
-| `Parser.Integer<Output>` | `Decimal`, `Hexadecimal`, `Binary`, `Octal` — overflow-checked, generic over `FixedWidthInteger` |
-| `Parser.Quoted` | `Double`, `Single`, `Doubling` — quoted strings with backslash or doubling escapes |
-| `Parser.Identifier` | `CStyle` and custom identifier classes |
-| `Parser.Whitespace`, `Parser.Newline` | Horizontal/vertical whitespace; LF, CR, CRLF, and universal newline parsers |
-| `Parser.Comment` | `Line` (`//`, `#`, `--`, …) and `Block` (`/* … */`, optionally nested) |
-| `Parser.Separated`, `Parser.Between` | Delimiter-separated sequences; content between delimiters |
-| `Parser.Chain`, `Parser.Expression` | Left/right-associative operator chains; precedence climbing |
-| `Parser.Diagnostic` | Line/column source locations, formatted error messages |
-| `Parser.Debug` | `Trace` and `Profile` instrumentation wrappers |
-
-## Error Handling
-
-Each parser family throws its own typed error, so `catch` arms are exhaustive per parser rather than matched against a shared catch-all:
-
-| Parser family | Error type | Cases |
-|---------------|-----------|-------|
-| `Parser.Integer` | `Parser.Integer<Output>.Error` | `.noDigits`, `.overflow`, `.invalidDigit`, `.missingPrefix` |
-| `Parser.Quoted` | `Parser.Quoted.Error` | `.missingOpenQuote`, `.unterminatedString`, `.invalidEscape`, `.unexpectedNewline` |
-| `Parser.Comment.Block` | `Parser.Comment.Block.Error` | `.missingOpen`, `.unterminatedComment` |
-| `Parser.Identifier`, `Parser.Newline`, `Parser.Comment.Line` | `Parser.Match.Error` | Predicate and match failures |
-| `Parser.Whitespace` | `Parser.Constraint.Error` | Count-constraint failures |
-
-```swift
-import Parsers
-
-var input = "\"unterminated"[...].utf8
-
-do {
-    _ = try Parser.Quoted.Double().parse(&input)
-} catch .missingOpenQuote {
-    // No opening quote at the current position
-} catch .unterminatedString {
-    // Opened but never closed
-} catch .invalidEscape(let sequence) {
-    // Unknown escape sequence, e.g. \q
-} catch .unexpectedNewline {
-    // Literal newline inside a single-line string
-}
-```
-
-Combinators propagate their constituent parsers' typed errors — for example, `Parser.Expression.Climbing`'s failure type is its atom parser's failure type.
-
-## Community
-
-<!-- BEGIN: discussion -->
-*Discussion thread will be created at first public release.*
-<!-- END: discussion -->
-
-## License
-
-Apache 2.0. See [LICENSE](LICENSE.md) for details.
+- Every leaf parser reads UTF-8 bytes from a `Substring.UTF8View`, and its character classes are ASCII only. Text it returns is decoded as UTF-8, with invalid bytes replaced rather than rejected.
+- A leaf parser consumes the longest run it accepts and leaves the following bytes in place. On failure it may leave part of the input consumed, such as a sign or a `0x` prefix with no digits after it. `Parsers.Between` and `Parsers.Surrounded` don't restore input either.
+- `Parsers.Integer.Decimal` takes an optional `+` or `-`. Negative numbers are built downward, so the minimum value of a signed type parses without overflow. `allowLeadingZeros: false` skips leading zeros rather than rejecting them, so 007 parses as 7.
+- `Parsers.Integer.Hexadecimal`, `Parsers.Integer.Binary` and `Parsers.Integer.Octal` take no sign. Their prefixes `0x`, `0b` and `0o` match in either case and are optional unless `requirePrefix` is true.
+- `Parsers.Quoted.Double` understands only a backslash followed by a backslash, a double quote, n, r, t, 0, b or f. Any other escape fails, and there is no Unicode escape. `Parsers.Quoted.Single` has no escapes, so a backslash is literal. `Parsers.Quoted.Doubling` reads a doubled quote as one quote and always accepts raw newlines. The other two reject a raw CR or LF unless `allowNewlines` is true.
+- `Parsers.Comment.Line` returns the text after the prefix and stops before CR or LF without consuming it. `Parsers.Comment.Block` returns the text between the outer delimiters. Unless `nestable` is true, the first closing delimiter ends it. When nested, inner delimiters stay in the returned text.
+- `Parsers.Newline.Any` and `Parsers.Whitespace.Vertical` count CR, LF and CRLF each as one newline. `Parsers.Whitespace.Horizontal` takes only spaces and tabs. These and `Parsers.Whitespace.Any` fail on zero matches. `Parsers.Whitespace.Skip` and `Parsers.Newline.Line` never fail.
+- `Parsers.Identifier.CStyle` and `Parsers.Identifier.Custom` return the number of bytes matched, not the text.
+- `Parsers.Separated` returns an empty array and leaves the input untouched when the first element fails, unless `minCount` is above zero. A separator with no element after it is left unconsumed, unless `allowTrailing` is true. At `maxCount` it stops before the next separator. An element failure is never thrown.
+- `Parsers.Chain.Left`, `Parsers.Chain.Right` and `Parsers.Expression.Climbing` fail only when the first operand fails. When an operator or its right side fails, the input goes back to before that operator and the result so far is returned. When an operator and its operand together consume nothing, the loop stops, so empty operators can't loop forever.
+- `Parsers.Expression.Climbing` tries operators from highest precedence down and takes the first that matches. `.none` associativity behaves like `.left`, so a chain of non-associative operators is accepted. Prefix operators bind tighter than any binary operator and may repeat. Each postfix operator is tried once, in order, after an operand, so prefix binds tighter than postfix.
+- The chain and climbing parsers need an input that is `Restorable` with an `Equatable` checkpoint. This package doesn't give `Substring.UTF8View` that conformance; its tests add one.
+- `Parsers.Diagnostic.Source` takes offsets in UTF-8 bytes and clamps them to the end of the content. Lines and columns start at 1, columns count bytes, and only LF ends a line. `Parsers.Diagnostic.Source.line(_:)` returns the last line with its trailing LF still attached.
+- `Parsers.Debug.Trace` prints to standard output unless given another output. The offset it prints is the number of elements still left in the input, not the distance from the start.
+- `Parsers.Debug.Profile.Stats` is a shared reference. Copies of one profiled parser record into the same stats, and recording from many tasks at once loses no updates. Failed parses count toward the durations as well.
