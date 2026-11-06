@@ -11,11 +11,15 @@ extension Parsers.Diagnostic {
 
         public let content: String
 
+        // swift-linter:disable:next raw concept
+        // REASON: the label a diagnostic prints for its source and passes on as a fileID, never opened; looked at Path and Path.Component, which name a place on disk and refuse a label such as an empty name, and swift-parsers depends on neither.
         public let filename: String?
 
         @usableFromInline
         let lineStarts: [String.Index]
 
+        // swift-linter:disable:next raw concept
+        // REASON: the label a diagnostic prints for its source and passes on as a fileID, never opened; looked at Path and Path.Component, which name a place on disk and refuse a label such as an empty name, and swift-parsers depends on neither.
         public init(content: String, filename: String? = nil) {
             self.content = content
             self.filename = filename
