@@ -68,14 +68,14 @@ let package = Package(
         .target(
             name: "Parsers Test Support",
             dependencies: [
-                "Parsers"
+                .target(name: "Parsers")
             ],
             path: "Tests/Support"
         ),
 
         .testTarget(
             name: "Parsers Tests",
-            dependencies: ["Parsers Test Support"]
+            dependencies: [.target(name: "Parsers Test Support")]
         ),
     ],
     swiftLanguageModes: [.v6]
