@@ -4,11 +4,6 @@ extension Parsers {
 }
 
 extension Parsers.Whitespace {
-
-    public struct Horizontal: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Whitespace.Horizontal: Parsing {
@@ -37,11 +32,6 @@ extension Parsers.Whitespace.Horizontal: Parsing {
 }
 
 extension Parsers.Whitespace {
-
-    public struct Vertical: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Whitespace.Vertical: Parsing {
@@ -79,11 +69,6 @@ extension Parsers.Whitespace.Vertical: Parsing {
 }
 
 extension Parsers.Whitespace {
-
-    public struct `Any`: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Whitespace.`Any`: Parsing {
@@ -110,28 +95,9 @@ extension Parsers.Whitespace.`Any`: Parsing {
 }
 
 extension Parsers.Whitespace {
-
-    public struct Skip: Sendable {
-
-        public let kind: Kind
-
-        @inlinable
-        public init(kind: Kind = .any) {
-            self.kind = kind
-        }
-    }
 }
 
 extension Parsers.Whitespace.Skip {
-
-    public enum Kind: Sendable {
-
-        case horizontal
-
-        case vertical
-
-        case any
-    }
 }
 
 extension Parsers.Whitespace.Skip: Parsing {

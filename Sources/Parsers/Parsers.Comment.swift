@@ -4,17 +4,6 @@ extension Parsers {
 }
 
 extension Parsers.Comment {
-
-    public struct Line: Sendable {
-
-        @usableFromInline
-        let prefixBytes: [UInt8]
-
-        @inlinable
-        public init(prefix: StaticString = "//") {
-            self.prefixBytes = prefix.withUTF8Buffer { unsafe [UInt8]($0) }
-        }
-    }
 }
 
 extension Parsers.Comment.Line: Parsing {
@@ -46,38 +35,9 @@ extension Parsers.Comment.Line: Parsing {
 }
 
 extension Parsers.Comment {
-
-    public struct Block: Sendable {
-
-        @usableFromInline
-        let openBytes: [UInt8]
-
-        @usableFromInline
-        let closeBytes: [UInt8]
-
-        public let nestable: Bool
-
-        @inlinable
-        public init(
-            open: StaticString = "/*",
-            close: StaticString = "*/",
-            nestable: Bool = false
-        ) {
-            self.openBytes = open.withUTF8Buffer { unsafe [UInt8]($0) }
-            self.closeBytes = close.withUTF8Buffer { unsafe [UInt8]($0) }
-            self.nestable = nestable
-        }
-    }
 }
 
 extension Parsers.Comment.Block {
-
-    public enum Error: Swift.Error, Sendable, Equatable {
-
-        case missingOpen
-
-        case unterminatedComment
-    }
 }
 
 extension Parsers.Comment.Block: Parsing {

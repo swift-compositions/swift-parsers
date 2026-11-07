@@ -4,11 +4,6 @@ extension Parsers {
 }
 
 extension Parsers.Newline {
-
-    public struct LF: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Newline.LF: Parsing {
@@ -27,11 +22,6 @@ extension Parsers.Newline.LF: Parsing {
 }
 
 extension Parsers.Newline {
-
-    public struct CR: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Newline.CR: Parsing {
@@ -50,11 +40,6 @@ extension Parsers.Newline.CR: Parsing {
 }
 
 extension Parsers.Newline {
-
-    public struct CRLF: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Newline.CRLF: Parsing {
@@ -82,11 +67,6 @@ extension Parsers.Newline.CRLF: Parsing {
 }
 
 extension Parsers.Newline {
-
-    public struct `Any`: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Newline.`Any`: Parsing {
@@ -117,11 +97,6 @@ extension Parsers.Newline.`Any`: Parsing {
 }
 
 extension Parsers.Newline {
-
-    public struct Line: Sendable {
-        @inlinable
-        public init() {}
-    }
 }
 
 extension Parsers.Newline.Line: Parsing {
