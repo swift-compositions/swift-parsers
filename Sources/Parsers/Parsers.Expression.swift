@@ -91,8 +91,6 @@ extension Parsers.Expression {
         Atom.Input.Checkpoint: Equatable
     {
 
-        public typealias Operand = Atom.Output
-
         @usableFromInline
         let atom: Atom
 
@@ -239,4 +237,9 @@ extension Parsers {
 
     @inlinable
     public static var expression: Expression.Type { Expression.self }
+}
+
+extension Parsers.Expression.Climbing {
+
+    public typealias Operand = Atom.Output
 }
