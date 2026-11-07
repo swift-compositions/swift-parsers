@@ -1,10 +1,14 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Separated` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Separated Tests` {}
+
+extension `Parser.Separated Tests` {
+    @Suite
+    struct `Parsers.Separated` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
 private struct DigitParser: Parsing, Sendable {
@@ -63,7 +67,7 @@ extension DoubleColonParser {
     }
 }
 
-extension `Parsers.Separated`.Unit {
+extension `Parser.Separated Tests`.`Parsers.Separated`.Unit {
     @Test
     func `basic CSV-like separation`() throws {
         let parser = DigitParser().separated(by: CommaParser())
@@ -108,7 +112,7 @@ extension `Parsers.Separated`.Unit {
     }
 }
 
-extension `Parsers.Separated`.`Edge Case` {
+extension `Parser.Separated Tests`.`Parsers.Separated`.`Edge Case` {
     @Test
     func `empty input returns empty array`() throws {
         let parser = DigitParser().separated(by: CommaParser())

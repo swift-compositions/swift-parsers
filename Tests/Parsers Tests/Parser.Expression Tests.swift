@@ -1,10 +1,14 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Expression` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Expression Tests` {}
+
+extension `Parser.Expression Tests` {
+    @Suite
+    struct `Parsers.Expression` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
 private struct IntAtom: Parsing, Sendable {
@@ -71,7 +75,7 @@ private func makeArithmeticParser() -> Parsers.Expression.Climbing<IntAtom, OpPa
     )
 }
 
-extension `Parsers.Expression`.Unit {
+extension `Parser.Expression Tests`.`Parsers.Expression`.Unit {
     @Test
     func `precedence - multiply before add`() throws {
         let parser = makeArithmeticParser()
@@ -113,7 +117,7 @@ extension `Parsers.Expression`.Unit {
     }
 }
 
-extension `Parsers.Expression`.`Edge Case` {
+extension `Parser.Expression Tests`.`Parsers.Expression`.`Edge Case` {
     @Test
     func `single atom`() throws {
         let parser = makeArithmeticParser()

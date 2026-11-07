@@ -1,45 +1,49 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Arithmetic Expression Parsing` {
+enum `Arithmetic Tests` {}
 
-    struct IntAtom: Parsing, Sendable {
-    }
+extension `Arithmetic Tests` {
+    @Suite
+    struct `Arithmetic Expression Parsing` {
 
-    struct PlusOp: Parsing, Sendable {
-    }
-
-    struct MinusOp: Parsing, Sendable {
-    }
-
-    struct StarOp: Parsing, Sendable {
-    }
-
-    @Test
-    func `ChainLeft - simple addition`() throws {
-        let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in
-            lhs + rhs
+        struct IntAtom: Parsing, Sendable {
         }
 
-        var input = "1+2+3"[...].utf8
-        let result = try parser.parse(&input)
-        #expect(result == 6)
-    }
-
-    @Test
-    func `ChainLeft - single operand`() throws {
-        let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in
-            lhs + rhs
+        struct PlusOp: Parsing, Sendable {
         }
 
-        var input = "42"[...].utf8
-        let result = try parser.parse(&input)
-        #expect(result == 42)
+        struct MinusOp: Parsing, Sendable {
+        }
+
+        struct StarOp: Parsing, Sendable {
+        }
+
+        @Test
+        func `ChainLeft - simple addition`() throws {
+            let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in
+                lhs + rhs
+            }
+
+            var input = "1+2+3"[...].utf8
+            let result = try parser.parse(&input)
+            #expect(result == 6)
+        }
+
+        @Test
+        func `ChainLeft - single operand`() throws {
+            let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in
+                lhs + rhs
+            }
+
+            var input = "42"[...].utf8
+            let result = try parser.parse(&input)
+            #expect(result == 42)
+        }
     }
 }
 
-extension `Arithmetic Expression Parsing`.IntAtom {
+extension `Arithmetic Tests`.`Arithmetic Expression Parsing`.IntAtom {
     typealias Input = Substring.UTF8View
     typealias Output = Int
     typealias Failure = Parsers.Match.Error
@@ -65,7 +69,7 @@ extension `Arithmetic Expression Parsing`.IntAtom {
     }
 }
 
-extension `Arithmetic Expression Parsing`.PlusOp {
+extension `Arithmetic Tests`.`Arithmetic Expression Parsing`.PlusOp {
     typealias Input = Substring.UTF8View
     typealias Output = Void
     typealias Failure = Parsers.Match.Error
@@ -78,7 +82,7 @@ extension `Arithmetic Expression Parsing`.PlusOp {
     }
 }
 
-extension `Arithmetic Expression Parsing`.MinusOp {
+extension `Arithmetic Tests`.`Arithmetic Expression Parsing`.MinusOp {
     typealias Input = Substring.UTF8View
     typealias Output = Void
     typealias Failure = Parsers.Match.Error
@@ -91,7 +95,7 @@ extension `Arithmetic Expression Parsing`.MinusOp {
     }
 }
 
-extension `Arithmetic Expression Parsing`.StarOp {
+extension `Arithmetic Tests`.`Arithmetic Expression Parsing`.StarOp {
     typealias Input = Substring.UTF8View
     typealias Output = Void
     typealias Failure = Parsers.Match.Error

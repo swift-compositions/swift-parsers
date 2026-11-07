@@ -1,10 +1,14 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Between` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Between Tests` {}
+
+extension `Parser.Between Tests` {
+    @Suite
+    struct `Parsers.Between` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
 private struct CharParser: Parsing, Sendable {
@@ -46,7 +50,7 @@ extension ContentParser {
     }
 }
 
-extension `Parsers.Between`.Unit {
+extension `Parser.Between Tests`.`Parsers.Between`.Unit {
     @Test
     func `matched parentheses`() throws {
         let open = CharParser(byte: UInt8(ascii: "("))
@@ -76,7 +80,7 @@ extension `Parsers.Between`.Unit {
     }
 }
 
-extension `Parsers.Between`.`Edge Case` {
+extension `Parser.Between Tests`.`Parsers.Between`.`Edge Case` {
     @Test
     func `missing open delimiter fails`() {
         let open = CharParser(byte: UInt8(ascii: "("))

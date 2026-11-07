@@ -1,10 +1,14 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Chain` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Chain Tests` {}
+
+extension `Parser.Chain Tests` {
+    @Suite
+    struct `Parsers.Chain` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
 private struct IntAtom: Parsing, Sendable {
@@ -103,7 +107,7 @@ extension DoublePlusOp {
     }
 }
 
-extension `Parsers.Chain`.Unit {
+extension `Parser.Chain Tests`.`Parsers.Chain`.Unit {
     @Test
     func `Left - left-associative addition`() throws {
         let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in
@@ -141,7 +145,7 @@ extension `Parsers.Chain`.Unit {
     }
 }
 
-extension `Parsers.Chain`.`Edge Case` {
+extension `Parser.Chain Tests`.`Parsers.Chain`.`Edge Case` {
     @Test
     func `Left - single operand`() throws {
         let parser = IntAtom().chain.left(PlusOp()) { lhs, _, rhs in

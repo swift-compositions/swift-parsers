@@ -1,87 +1,91 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Integer Parsers` {
+enum `Integer Tests` {}
 
-    @Test
-    func `Decimal - basic parsing`() throws {
-        let parser = Parsers.Integer<Int>.Decimal()
-        var input = "123"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 123)
-        #expect(input.isEmpty)
-    }
+extension `Integer Tests` {
+    @Suite
+    struct `Integer Parsers` {
 
-    @Test
-    func `Decimal - negative`() throws {
-        let parser = Parsers.Integer<Int>.Decimal()
-        var input = "-456"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == -456)
-    }
+        @Test
+        func `Decimal - basic parsing`() throws {
+            let parser = Parsers.Integer<Int>.Decimal()
+            var input = "123"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 123)
+            #expect(input.isEmpty)
+        }
 
-    @Test
-    func `Decimal - positive sign`() throws {
-        let parser = Parsers.Integer<Int>.Decimal()
-        var input = "+789"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 789)
-    }
+        @Test
+        func `Decimal - negative`() throws {
+            let parser = Parsers.Integer<Int>.Decimal()
+            var input = "-456"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == -456)
+        }
 
-    @Test
-    func `Decimal - no sign when disabled`() throws {
-        let parser = Parsers.Integer<UInt>.Decimal(allowSign: false)
-        var input = "123"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 123)
-    }
+        @Test
+        func `Decimal - positive sign`() throws {
+            let parser = Parsers.Integer<Int>.Decimal()
+            var input = "+789"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 789)
+        }
 
-    @Test
-    func `Hexadecimal - basic`() throws {
-        let parser = Parsers.Integer<UInt32>.Hexadecimal()
-        var input = "FF"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 255)
-    }
+        @Test
+        func `Decimal - no sign when disabled`() throws {
+            let parser = Parsers.Integer<UInt>.Decimal(allowSign: false)
+            var input = "123"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 123)
+        }
 
-    @Test
-    func `Hexadecimal - with prefix`() throws {
-        let parser = Parsers.Integer<UInt32>.Hexadecimal()
-        var input = "0xFF"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 255)
-    }
+        @Test
+        func `Hexadecimal - basic`() throws {
+            let parser = Parsers.Integer<UInt32>.Hexadecimal()
+            var input = "FF"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 255)
+        }
 
-    @Test
-    func `Hexadecimal - required prefix`() throws {
-        let parser = Parsers.Integer<UInt32>.Hexadecimal(requirePrefix: true)
-        var input = "0xABCD"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 0xABCD)
-    }
+        @Test
+        func `Hexadecimal - with prefix`() throws {
+            let parser = Parsers.Integer<UInt32>.Hexadecimal()
+            var input = "0xFF"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 255)
+        }
 
-    @Test
-    func `Binary - basic`() throws {
-        let parser = Parsers.Integer<UInt8>.Binary()
-        var input = "1010"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 10)
-    }
+        @Test
+        func `Hexadecimal - required prefix`() throws {
+            let parser = Parsers.Integer<UInt32>.Hexadecimal(requirePrefix: true)
+            var input = "0xABCD"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 0xABCD)
+        }
 
-    @Test
-    func `Binary - with prefix`() throws {
-        let parser = Parsers.Integer<UInt8>.Binary()
-        var input = "0b1111"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 15)
-    }
+        @Test
+        func `Binary - basic`() throws {
+            let parser = Parsers.Integer<UInt8>.Binary()
+            var input = "1010"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 10)
+        }
 
-    @Test
-    func `Octal - basic`() throws {
-        let parser = Parsers.Integer<Int>.Octal()
-        var input = "777"[...].utf8
-        let value = try parser.parse(&input)
-        #expect(value == 511)
+        @Test
+        func `Binary - with prefix`() throws {
+            let parser = Parsers.Integer<UInt8>.Binary()
+            var input = "0b1111"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 15)
+        }
+
+        @Test
+        func `Octal - basic`() throws {
+            let parser = Parsers.Integer<Int>.Octal()
+            var input = "777"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 511)
+        }
     }
 }

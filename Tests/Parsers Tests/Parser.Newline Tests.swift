@@ -1,13 +1,17 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Newline` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Newline Tests` {}
+
+extension `Parser.Newline Tests` {
+    @Suite
+    struct `Parsers.Newline` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
-extension `Parsers.Newline`.Unit {
+extension `Parser.Newline Tests`.`Parsers.Newline`.Unit {
     @Test
     func `LF matches line feed`() throws {
         let parser = Parsers.Newline.LF()
@@ -49,7 +53,7 @@ extension `Parsers.Newline`.Unit {
     }
 }
 
-extension `Parsers.Newline`.`Edge Case` {
+extension `Parser.Newline Tests`.`Parsers.Newline`.`Edge Case` {
     @Test
     func `LF fails on non-newline`() {
         let parser = Parsers.Newline.LF()

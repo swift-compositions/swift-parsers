@@ -1,13 +1,21 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Diagnostic.Source` {
+enum `Parser.Diagnostic Tests` {}
+
+extension `Parser.Diagnostic Tests` {
+    @Suite
+    struct `Parsers.Diagnostic.Source` {
+    }
+}
+
+extension `Parser.Diagnostic Tests`.`Parsers.Diagnostic.Source` {
     @Suite struct `Line Starts` {}
+
     @Suite struct `Line Content` {}
 }
 
-extension `Parsers.Diagnostic.Source`.`Line Starts` {
+extension `Parser.Diagnostic Tests`.`Parsers.Diagnostic.Source`.`Line Starts` {
     @Test
     func `Single line has one line start`() {
         let source = Parsers.Diagnostic.Source(content: "hello")
@@ -58,7 +66,7 @@ extension `Parsers.Diagnostic.Source`.`Line Starts` {
     }
 }
 
-extension `Parsers.Diagnostic.Source`.`Line Content` {
+extension `Parser.Diagnostic Tests`.`Parsers.Diagnostic.Source`.`Line Content` {
     @Test
     func `Multi-byte UTF-8 on a line`() {
         let source = Parsers.Diagnostic.Source(content: "café\nnaïve")

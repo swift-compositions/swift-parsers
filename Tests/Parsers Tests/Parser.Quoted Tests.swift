@@ -1,13 +1,17 @@
 import Parsers_Test_Support
 import Testing
 
-@Suite
-struct `Parsers.Quoted` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
+enum `Parser.Quoted Tests` {}
+
+extension `Parser.Quoted Tests` {
+    @Suite
+    struct `Parsers.Quoted` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+    }
 }
 
-extension `Parsers.Quoted`.Unit {
+extension `Parser.Quoted Tests`.`Parsers.Quoted`.Unit {
     @Test
     func `Double parses simple string`() throws {
         let parser = Parsers.Quoted.Double()
@@ -51,7 +55,7 @@ extension `Parsers.Quoted`.Unit {
     }
 }
 
-extension `Parsers.Quoted`.`Edge Case` {
+extension `Parser.Quoted Tests`.`Parsers.Quoted`.`Edge Case` {
     @Test
     func `Double fails on unclosed string`() {
         let parser = Parsers.Quoted.Double()
