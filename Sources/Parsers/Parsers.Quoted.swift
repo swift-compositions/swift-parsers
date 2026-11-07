@@ -4,12 +4,42 @@ extension Parsers {
 }
 
 extension Parsers.Quoted {
+
+    public enum EscapeStyle: Sendable {
+
+        case backslash
+
+        case doubling
+
+        case none
+    }
 }
 
 extension Parsers.Quoted {
+
+    public enum Error: Swift.Error, Sendable, Equatable {
+
+        case missingOpenQuote
+
+        case unterminatedString
+
+        case invalidEscape(sequence: String)
+
+        case unexpectedNewline
+    }
 }
 
 extension Parsers.Quoted {
+
+    public struct Double: Sendable {
+
+        public let allowNewlines: Bool
+
+        @inlinable
+        public init(allowNewlines: Bool = false) {
+            self.allowNewlines = allowNewlines
+        }
+    }
 }
 
 extension Parsers.Quoted.Double: Parsing {
@@ -72,6 +102,16 @@ extension Parsers.Quoted.Double: Parsing {
 }
 
 extension Parsers.Quoted {
+
+    public struct Single: Sendable {
+
+        public let allowNewlines: Bool
+
+        @inlinable
+        public init(allowNewlines: Bool = false) {
+            self.allowNewlines = allowNewlines
+        }
+    }
 }
 
 extension Parsers.Quoted.Single: Parsing {
@@ -113,6 +153,16 @@ extension Parsers.Quoted.Single: Parsing {
 }
 
 extension Parsers.Quoted {
+
+    public struct Doubling: Sendable {
+
+        public let quote: UInt8
+
+        @inlinable
+        public init(quote: UInt8 = .ascii.doubleQuote) {
+            self.quote = quote
+        }
+    }
 }
 
 extension Parsers.Quoted.Doubling: Parsing {
