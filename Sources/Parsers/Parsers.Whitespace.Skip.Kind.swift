@@ -1,4 +1,3 @@
-
 extension Parsers.Whitespace.Skip {
     public enum Kind: Sendable {
 

@@ -1,4 +1,3 @@
-
 extension Parsers.Whitespace {
     public struct Vertical: Sendable {
         @inlinable

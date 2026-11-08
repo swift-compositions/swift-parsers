@@ -1,4 +1,3 @@
-
 extension Parsers.Quoted {
     public enum Error: Swift.Error, Sendable, Equatable {
 

@@ -1,7 +1,6 @@
 public import Kernel_Clock
 public import Synchronization
 
-
 extension Parsers.Debug.Profile.Stats {
     @usableFromInline
     struct State: Sendable {

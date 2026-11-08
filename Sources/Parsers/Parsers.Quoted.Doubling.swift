@@ -1,4 +1,3 @@
-
 extension Parsers.Quoted {
     public struct Doubling: Sendable {
 

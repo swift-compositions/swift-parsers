@@ -1,4 +1,3 @@
-
 extension Parsers.Integer {
     public enum Error: Swift.Error, Sendable, Equatable {
 

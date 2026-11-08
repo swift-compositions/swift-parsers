@@ -1,6 +1,5 @@
 public import Text
 
-
 extension Parsers.Diagnostic {
     public struct Source: Sendable {
 

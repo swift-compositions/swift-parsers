@@ -1,6 +1,5 @@
 public import Checkpoint
 
-
 extension Parsers.Expression {
     public struct Climbing<Atom: Parsing, Op: Parsing>
     where

@@ -1,6 +1,5 @@
 public import Checkpoint
 
-
 extension Parsers.Expression {
     public struct Operator<Operand, Op: Parsing> {
 

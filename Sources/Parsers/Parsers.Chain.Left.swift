@@ -1,6 +1,5 @@
 public import Checkpoint
 
-
 extension Parsers.Chain {
     public struct Left<Operand: Parsing, Operator: Parsing>
     where

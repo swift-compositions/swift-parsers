@@ -1,4 +1,3 @@
-
 extension Parsers.Identifier {
     public struct Custom: Sendable {
         @usableFromInline

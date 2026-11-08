@@ -1,4 +1,3 @@
-
 extension Parsers.Newline {
     public struct Line: Sendable {
         @inlinable

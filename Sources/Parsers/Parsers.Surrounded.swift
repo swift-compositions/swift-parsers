@@ -1,4 +1,3 @@
-
 extension Parsers {
     public struct Surrounded<Delimiter: Parsing, Content: Parsing>
     where Delimiter.Input == Content.Input {

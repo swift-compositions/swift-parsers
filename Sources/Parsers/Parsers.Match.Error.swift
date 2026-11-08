@@ -1,4 +1,3 @@
-
 extension Parsers.Match {
     public enum Error: Swift.Error, Sendable, Equatable {
 

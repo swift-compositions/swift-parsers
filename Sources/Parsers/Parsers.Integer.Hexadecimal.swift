@@ -1,4 +1,3 @@
-
 extension Parsers.Integer {
     public struct Hexadecimal: Sendable {
 

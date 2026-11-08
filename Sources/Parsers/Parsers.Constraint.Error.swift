@@ -1,4 +1,3 @@
-
 extension Parsers.Constraint {
     public enum Error: Swift.Error, Sendable, Equatable {
 
