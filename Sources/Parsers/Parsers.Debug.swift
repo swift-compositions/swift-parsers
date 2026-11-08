@@ -7,29 +7,6 @@ extension Parsers {
 }
 
 extension Parsers.Debug {
-
-    public struct Trace<P: Parsing>
-    where P.Input: Swift.Collection {
-
-        @usableFromInline
-        let inner: P
-
-        public let label: String
-
-        @usableFromInline
-        let output: (String) -> Void
-
-        @inlinable
-        public init(
-            _ inner: P,
-            label: String,
-            output: @escaping (String) -> Void = { print($0) }
-        ) {
-            self.inner = inner
-            self.label = label
-            self.output = output
-        }
-    }
 }
 
 extension Parsers.Debug.Trace: Parsing {
@@ -57,52 +34,12 @@ extension Parsers.Debug.Trace: Parsing {
 }
 
 extension Parsers.Debug {
-
-    public struct Profile<P: Parsing> {
-
-        @usableFromInline
-        let inner: P
-
-        public let label: String
-
-        public let stats: Stats
-
-        @inlinable
-        public init(_ inner: P, label: String) {
-            self.inner = inner
-            self.label = label
-            self.stats = Stats()
-        }
-    }
 }
 
 extension Parsers.Debug.Profile {
-
-    public final class Stats: @unchecked Sendable {
-        @usableFromInline
-        let _state: Mutex<State>
-
-        @inlinable
-        public init() {
-            _state = Mutex(State())
-        }
-    }
 }
 
 extension Parsers.Debug.Profile.Stats {
-
-    @usableFromInline
-    struct State: Sendable {
-        @usableFromInline var invocations: Int = 0
-        @usableFromInline var successes: Int = 0
-        @usableFromInline var failures: Int = 0
-        @usableFromInline var totalDuration: Duration = .zero
-        @usableFromInline var minDuration: Duration? = nil
-        @usableFromInline var maxDuration: Duration = .zero
-
-        @usableFromInline
-        init() {}
-    }
 }
 
 extension Parsers.Debug.Profile.Stats {

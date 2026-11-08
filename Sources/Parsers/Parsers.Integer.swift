@@ -4,36 +4,9 @@ extension Parsers {
 }
 
 extension Parsers.Integer {
-
-    public enum Error: Swift.Error, Sendable, Equatable {
-
-        case noDigits
-
-        case overflow(String)
-
-        case invalidDigit(character: UInt8, base: Int)
-
-        case missingPrefix(expected: String)
-    }
 }
 
 extension Parsers.Integer {
-
-    public struct Decimal: Sendable {
-
-        public let allowSign: Bool
-
-        public let allowLeadingZeros: Bool
-
-        @inlinable
-        public init(
-            allowSign: Bool = true,
-            allowLeadingZeros: Bool = true
-        ) {
-            self.allowSign = allowSign
-            self.allowLeadingZeros = allowLeadingZeros
-        }
-    }
 }
 
 extension Parsers.Integer.Decimal: Parsing {
@@ -102,16 +75,6 @@ extension Parsers.Integer.Decimal: Parsing {
 }
 
 extension Parsers.Integer {
-
-    public struct Hexadecimal: Sendable {
-
-        public let requirePrefix: Bool
-
-        @inlinable
-        public init(requirePrefix: Bool = false) {
-            self.requirePrefix = requirePrefix
-        }
-    }
 }
 
 extension Parsers.Integer.Hexadecimal: Parsing {
@@ -179,16 +142,6 @@ extension Parsers.Integer.Hexadecimal: Parsing {
 }
 
 extension Parsers.Integer {
-
-    public struct Binary: Sendable {
-
-        public let requirePrefix: Bool
-
-        @inlinable
-        public init(requirePrefix: Bool = false) {
-            self.requirePrefix = requirePrefix
-        }
-    }
 }
 
 extension Parsers.Integer.Binary: Parsing {
@@ -244,16 +197,6 @@ extension Parsers.Integer.Binary: Parsing {
 }
 
 extension Parsers.Integer {
-
-    public struct Octal: Sendable {
-
-        public let requirePrefix: Bool
-
-        @inlinable
-        public init(requirePrefix: Bool = false) {
-            self.requirePrefix = requirePrefix
-        }
-    }
 }
 
 extension Parsers.Integer.Octal: Parsing {
