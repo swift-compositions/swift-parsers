@@ -16,7 +16,7 @@ extension `Arithmetic Tests` {
         struct MinusOp: Parsing, Sendable {
         }
 
-        struct StarOp: Parsing, Sendable {
+        fileprivate struct StarOp: Parsing, Sendable {
         }
 
         @Test

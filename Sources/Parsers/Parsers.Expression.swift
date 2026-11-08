@@ -32,7 +32,7 @@ extension Parsers.Expression.Climbing: Parsing {
     }
 
     @inlinable
-    package func parseExpression(
+    func parseExpression(
         _ input: inout Input,
         minPrecedence: Int
     ) throws(Failure) -> Operand {
@@ -109,7 +109,7 @@ extension Parsers.Expression.Climbing: Parsing {
     }
 
     @inlinable
-    package func parsePrimary(_ input: inout Input) throws(Failure) -> Operand {
+    func parsePrimary(_ input: inout Input) throws(Failure) -> Operand {
 
         for prefix in prefixOps {
             let saved = input
