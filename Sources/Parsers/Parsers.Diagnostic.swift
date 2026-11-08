@@ -50,11 +50,11 @@ extension Parsers.Diagnostic.Source {
         let start = lineStarts[idx]
         let end: String.Index
 
-        if idx + 1 < lineStarts.count {
+        end = if idx + 1 < lineStarts.count {
 
-            end = content.index(before: lineStarts[idx + 1])
+            content.index(before: lineStarts[idx + 1])
         } else {
-            end = content.endIndex
+            content.endIndex
         }
 
         if start >= end {
