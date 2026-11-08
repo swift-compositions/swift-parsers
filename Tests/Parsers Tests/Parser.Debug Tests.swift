@@ -59,7 +59,7 @@ extension `Parser.Debug Tests`.`Parsers.Debug.Profile.Stats`.`Edge Case` {
         let iterations = 20_000
 
         await withTaskGroup(of: Void.self) { group in
-            for i in 0..<iterations {
+            (0..<iterations).forEach { i in
                 group.addTask {
                     if i.isMultiple(of: 2) {
                         stats.recordSuccess(elapsed: .milliseconds(1))

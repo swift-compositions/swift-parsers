@@ -147,8 +147,8 @@ extension Parsers.Diagnostic {
         let startLine = max(1, lineInt - contextLines)
         let endLine = min(source.lineStarts.count, lineInt + contextLines)
 
-        for lineNum in startLine...endLine {
-            guard let lineContent = source.line(lineNum) else { continue }
+        (startLine...endLine).forEach { lineNum in
+            guard let lineContent = source.line(lineNum) else { return }
 
             let lineNumStr = padLeft(String(lineNum), toLength: 3)
 
@@ -218,8 +218,8 @@ extension Parsers.Diagnostic {
         let startLine = max(1, lineInt - 3)
         let endLine = min(source.lineStarts.count, lineInt + 3)
 
-        for lineNum in startLine...endLine {
-            guard let lineContent = source.line(lineNum) else { continue }
+        (startLine...endLine).forEach { lineNum in
+            guard let lineContent = source.line(lineNum) else { return }
 
             let marker = lineNum == lineInt ? ">>>" : "   "
             lines.append("\(marker) \(lineNum): \(lineContent)")
