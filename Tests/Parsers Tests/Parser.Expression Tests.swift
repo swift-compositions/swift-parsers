@@ -171,4 +171,100 @@ extension `Parser.Expression Tests`.`Parsers.Expression`.`Edge Case` {
 
         #expect(result == 2)
     }
+
+    @Test
+    func `non-associative operator rejects a chain of the same precedence`() throws {
+        let parser = Parsers.Expression.Climbing(
+            atom: IntAtom(),
+            operators: [
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "<")),
+                    precedence: 1,
+                    associativity: .none
+                ) { $0 < $1 ? 1 : 0 },
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "+")),
+                    precedence: 2,
+                    associativity: .left
+                ) { $0 + $1 },
+            ]
+        )
+        var input = "1<2<3"[...].utf8
+
+        let result = try parser.parse(&input)
+
+        #expect(result == 1)
+        #expect(input.first == UInt8(ascii: "<"))
+    }
+
+    @Test
+    func `non-associative operator accepts higher-precedence operands`() throws {
+        let parser = Parsers.Expression.Climbing(
+            atom: IntAtom(),
+            operators: [
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "<")),
+                    precedence: 1,
+                    associativity: .none
+                ) { $0 < $1 ? 1 : 0 },
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "+")),
+                    precedence: 2,
+                    associativity: .left
+                ) { $0 + $1 },
+            ]
+        )
+        var input = "1+1<1+2"[...].utf8
+
+        let result = try parser.parse(&input)
+
+        #expect(result == 1)
+        #expect(input.isEmpty)
+    }
+
+    @Test
+    func `postfix operator binds tighter than infix`() throws {
+        let parser = Parsers.Expression.Climbing(
+            atom: IntAtom(),
+            operators: [
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "+")),
+                    precedence: 1,
+                    associativity: .left
+                ) { $0 + $1 }
+            ],
+            postfix: [
+                .init(parser: OpParser(byte: UInt8(ascii: "!"))) { $0 * 2 }
+            ]
+        )
+        var input = "1+3!"[...].utf8
+
+        let result = try parser.parse(&input)
+
+        #expect(result == 7)
+        #expect(input.isEmpty)
+    }
+
+    @Test
+    func `postfix operator applies to the leading operand`() throws {
+        let parser = Parsers.Expression.Climbing(
+            atom: IntAtom(),
+            operators: [
+                .init(
+                    parser: OpParser(byte: UInt8(ascii: "+")),
+                    precedence: 1,
+                    associativity: .left
+                ) { $0 + $1 }
+            ],
+            postfix: [
+                .init(parser: OpParser(byte: UInt8(ascii: "!"))) { $0 * 2 }
+            ]
+        )
+        var input = "3!+1"[...].utf8
+
+        let result = try parser.parse(&input)
+
+        #expect(result == 7)
+        #expect(input.isEmpty)
+    }
 }

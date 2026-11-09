@@ -50,6 +50,8 @@ extension Parsers.Expression.Climbing: Parsing {
             }
         }
 
+        var nonAssociative: Int?
+
         while true {
 
             var matchedOp: Parsers.Expression.Operator<Operand, Op>?
@@ -72,6 +74,11 @@ extension Parsers.Expression.Climbing: Parsing {
             }
 
             guard input.checkpoint != entry else {
+                input = opSaved
+                break
+            }
+
+            guard nonAssociative != op.precedence else {
                 input = opSaved
                 break
             }
@@ -103,6 +110,9 @@ extension Parsers.Expression.Climbing: Parsing {
             }
 
             lhs = op.apply(lhs, rhs)
+            if case .none = op.associativity {
+                nonAssociative = op.precedence
+            }
         }
 
         return lhs
