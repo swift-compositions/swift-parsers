@@ -33,14 +33,11 @@ extension Parsers.Integer.Decimal: Parsing {
         var result: Output = 0
         var digitString = ""
 
-        if !allowLeadingZeros {
-            while input.first == .ascii.0 {
-                hasDigits = true
-                input.removeFirst()
-                if input.first.map({ $0 < .ascii.0 || $0 > .ascii.9 }) ?? true {
-
-                    return 0
-                }
+        if !allowLeadingZeros, input.first == .ascii.0 {
+            var rest = input
+            rest.removeFirst()
+            if let next = rest.first, next >= .ascii.0, next <= .ascii.9 {
+                throw .leadingZero
             }
         }
 

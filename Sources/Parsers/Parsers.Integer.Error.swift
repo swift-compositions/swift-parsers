@@ -3,6 +3,9 @@ extension Parsers.Integer {
 
         case noDigits
 
+        /// A zero precedes another digit while leading zeros are disallowed.
+        case leadingZero
+
         case overflow(String)
 
         case invalidDigit(character: UInt8, base: Int)

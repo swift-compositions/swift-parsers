@@ -33,6 +33,32 @@ extension `Integer Tests` {
         }
 
         @Test
+        func `Decimal - leading zero rejected when disallowed`() {
+            let parser = Parsers.Integer<Int>.Decimal(allowLeadingZeros: false)
+            var input = "007"[...].utf8
+            #expect(throws: Parsers.Integer<Int>.Error.leadingZero) {
+                try parser.parse(&input)
+            }
+        }
+
+        @Test
+        func `Decimal - lone zero accepted when leading zeros disallowed`() throws {
+            let parser = Parsers.Integer<Int>.Decimal(allowLeadingZeros: false)
+            var input = "0,1"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 0)
+            #expect(input.first == UInt8(ascii: ","))
+        }
+
+        @Test
+        func `Decimal - leading zeros accepted by default`() throws {
+            let parser = Parsers.Integer<Int>.Decimal()
+            var input = "007"[...].utf8
+            let value = try parser.parse(&input)
+            #expect(value == 7)
+        }
+
+        @Test
         func `Decimal - no sign when disabled`() throws {
             let parser = Parsers.Integer<UInt>.Decimal(allowSign: false)
             var input = "123"[...].utf8
