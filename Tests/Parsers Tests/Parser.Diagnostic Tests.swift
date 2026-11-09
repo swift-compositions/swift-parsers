@@ -46,7 +46,14 @@ extension `Parser.Diagnostic Tests`.`Parsers.Diagnostic.Source`.`Line Starts` {
         let source = Parsers.Diagnostic.Source(content: "aaa\nbbb\n")
         #expect(source.line(1) == "aaa")
 
-        #expect(source.line(2) == "bbb\n")
+        #expect(source.line(2) == "bbb")
+        #expect(source.line(3) == nil)
+    }
+
+    @Test
+    func `Trailing CRLF is stripped from the last line`() {
+        let source = Parsers.Diagnostic.Source(content: "aaa\r\nbbb\r\n")
+        #expect(source.line(2) == "bbb")
         #expect(source.line(3) == nil)
     }
 

@@ -54,6 +54,8 @@ extension Parsers.Diagnostic.Source {
             if idx + 1 < lineStarts.count {
 
                 content.index(before: lineStarts[idx + 1])
+            } else if content.utf8.last == 0x0A {
+                content.index(before: content.endIndex)
             } else {
                 content.endIndex
             }
